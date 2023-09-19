@@ -1,6 +1,7 @@
-variable "project-name" {
-  type    = string
-  default = "<terraform-project-name>"
+variable "gcp-project-id" {
+  description = "unique project ID defined in string"
+  default     = "<gcp-project-id>"
+  type        = string
 }
 
 variable "gcp-key-name" {
@@ -16,12 +17,6 @@ variable "region" {
 variable "zone" {
   type    = string
   default = "us-central1-c"
-}
-
-variable "gcp-project-id" {
-  description = "unique project ID defined in string"
-  default     = "<gcp-project-id>"
-  type        = string
 }
 
 variable "gcp-project-num" {

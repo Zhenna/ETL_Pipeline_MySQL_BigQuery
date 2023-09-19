@@ -58,6 +58,13 @@ resource "google_project_iam_member" "service_account_user" {
   member  = "serviceAccount:${google_service_account.etl_account.email}"
 }
 
+# add Monitoring Admin Role
+resource "google_project_iam_member" "monitoring_admin" {
+  project = var.gcp-project-id
+  role    = "roles/monitoring.admin"
+  member  = "serviceAccount:${google_service_account.etl_fms.email}"
+}
+
 # grant service account permission to trigger cloud run job
 resource "google_cloud_run_v2_job_iam_member" "run_table1" {
   project  = google_cloud_run_v2_job.run_table1.project

@@ -4,7 +4,7 @@ terraform {
 
 provider "google" {
   credentials = file("../${var.gcp-key-name}")
-  project     = var.project-name
+  project     = var.gcp-project-id
   region      = var.region
   zone        = var.zone
 }
