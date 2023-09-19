@@ -44,6 +44,26 @@ src/deploy.sh
 ```
 - Last, set up a CRON job to trigger docker run on a fixed schedule.
 
+## How to edit Google Cloud Infrastructure
+
+- Go to `/terraform`
+```shell
+cd terraform
+```
+- Initialize terraform by running
+```shell
+terraform init
+```
+- Edit terraform configuration file
+- Check for changes by running
+```shell
+terraform plan
+```
+- Apply changes by running
+```shell
+terraform apply
+```
+
 ## How to add new table for daily ETL?
 
 Please create a new branch and merge to `main` after testing.
@@ -56,7 +76,11 @@ Please create a new branch and merge to `main` after testing.
 
 4. Add new default choices for `ArgumentParser` `--table` argument in `src/main.py`.
 
-5. Add new scheduled job accordly when it is ready for deployment. TBC.
+5. Add new scheduled job accordly when it is ready for deployment. 
+
+    5.1 Open `terraform/cloud_run.tf` and add a new `google_cloud_run_v2_job` resource block.
+    5.2 Open `terraform/cloud_scheduler.tf` and add a new `google_cloud_scheduler_job` resource block.
+    5.3 Open `terraform/iam.tf` and add a new `google_cloud_run_v2_job_iam_member` resource block.
 
 ## repo structure
 ```
