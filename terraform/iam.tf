@@ -43,3 +43,17 @@ resource "google_project_iam_member" "bigquery_job_user" {
   role    = "roles/bigquery.jobUser"
   member  = "serviceAccount:${google_service_account.etl_account.email}"
 }
+
+# add Cloud Scheduler Admin Role
+resource "google_project_iam_member" "cloud_scheduler_admin" {
+  project = var.gcp-project-id
+  role    = "roles/cloudscheduler.admin"
+  member  = "serviceAccount:${google_service_account.etl_fms.email}"
+}
+
+# add Service Account User Role
+resource "google_project_iam_member" "service_account_user" {
+  project = var.gcp-project-id
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${google_service_account.etl_fms.email}"
+}
