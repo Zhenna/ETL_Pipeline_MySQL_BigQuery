@@ -48,12 +48,29 @@ resource "google_project_iam_member" "bigquery_job_user" {
 resource "google_project_iam_member" "cloud_scheduler_admin" {
   project = var.gcp-project-id
   role    = "roles/cloudscheduler.admin"
-  member  = "serviceAccount:${google_service_account.etl_fms.email}"
+  member  = "serviceAccount:${google_service_account.etl_account.email}"
 }
 
 # add Service Account User Role
 resource "google_project_iam_member" "service_account_user" {
   project = var.gcp-project-id
   role    = "roles/iam.serviceAccountUser"
-  member  = "serviceAccount:${google_service_account.etl_fms.email}"
+  member  = "serviceAccount:${google_service_account.etl_account.email}"
+}
+
+# grant service account permission to trigger cloud run job
+resource "google_cloud_run_v2_job_iam_member" "run_table1" {
+  project  = google_cloud_run_v2_job.run_table1.project
+  location = google_cloud_run_v2_job.run_table1.location
+  name     = google_cloud_run_v2_job.run_table1.name
+  role     = "roles/run.admin"
+  member   = "serviceAccount:${google_service_account.etl_account.email}"
+}
+
+resource "google_cloud_run_v2_job_iam_member" "run_table2" {
+  project  = google_cloud_run_v2_job.run_table2.project
+  location = google_cloud_run_v2_job.run_table2.location
+  name     = google_cloud_run_v2_job.run_table2.name
+  role     = "roles/run.admin"
+  member   = "serviceAccount:${google_service_account.etl_account.email}"
 }
