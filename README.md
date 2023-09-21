@@ -95,7 +95,9 @@ Please create a new branch and merge to `main` after testing.
 ├── ...
 │
 ├── terraform                     # Infrastructure as code            
-│   ├── terraform_import.sh       # shell script to import resources
+│   ├── terraform_import.sh       # shell script to import resources when necessary
+│   ├── backend.tf                # storage of terraform state
+│   ├── cloud_storage.tf          # storage of raw data
 │   ├── cloud_run.tf              # runners for all jobs
 │   ├── cloud_scheduler.tf        # triggers for all jobs
 │   ├── iam.tf                    # service account and permissions

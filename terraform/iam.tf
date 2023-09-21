@@ -5,6 +5,19 @@ resource "google_service_account" "etl_account" {
   project      = var.gcp-project-id
 }
 
+# allow this new service account to access cloud storage bucket
+resource "google_storage_bucket_iam_member" "raw-data-bucket" {
+  bucket = google_storage_bucket.bucket-raw-data.name
+  role   = "roles/storage.admin"
+  member = "serviceAccount:${google_service_account.etl_account.email}"
+}
+
+resource "google_storage_bucket_iam_member" "tf-state-bucket" {
+  bucket = google_storage_bucket.bucket-tf-states.name
+  role   = "roles/storage.admin"
+  member = "serviceAccount:${google_service_account.etl_account.email}"
+}
+
 # allow this new service account to assume the role of secret accessor
 resource "google_secret_manager_secret_iam_member" "secret-accessor" {
   project   = var.gcp-project-num
