@@ -1,6 +1,7 @@
 from typing import Optional, Literal, Tuple, Iterator
 from datetime import datetime
 import json
+import uuid
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine.url import URL
@@ -262,16 +263,56 @@ def select_mysql(
     return formatted_sql
 
 
+def cloud_storage_prefix(
+    table: table_properties_mysql2bq,
+    bucket_name: str,
+    environment: Literal["dev", "prod"],
+    end_datetime: datetime,
+) -> str:
+    """generate an unique path to cloud storage for raw data"""
+
+    gs_url = "gs://{bucket_name}/{environment}/{table_name}/year={year}/month={month}/day={day}/{filename}"
+    filename = "{table_name}_{uuid}.csv"
+
+    filename = filename.format(
+        table_name=table.table_name_bq,
+        uuid=uuid.uuid4(),
+    )
+
+    gs_url = gs_url.format(
+        bucket_name=bucket_name,
+        environment=environment,
+        table_name=table.table_name_bq,
+        year=end_datetime.year,
+        month=end_datetime.month,
+        day=end_datetime.day,
+        filename=filename,
+    )
+
+    return gs_url
+
+
 def process_chunk_then_load(
     df: pd.DataFrame,
     table_name: table_properties_mysql2bq,
     dataset_name: str,
     key_path: str,
+    bucket_name: str,
+    environment: Literal["dev", "prod"],
+    end_datetime: datetime,
 ) -> None:
     """for each dataframe chunk:
-    1. clean data
+    1. save raw data to cloud storage
     2. load to BigQuery
     """
+    gs_url = cloud_storage_prefix(
+        table=table_name,
+        bucket_name=bucket_name,
+        environment=environment,
+        end_datetime=end_datetime,
+    )
+    df.to_csv(gs_url)
+    print(f"Data saved in {gs_url} ...")
 
     df2bq(
         df=df,

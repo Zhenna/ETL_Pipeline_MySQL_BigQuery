@@ -11,6 +11,7 @@ PROJECT_ID = "<gcp-project-num>"
 SECRET_ID = "<gcp-secret-id>"
 KEY_PATH = "./<gcp-key-name>.json"
 CHUNK_THRESHOLD = 50000
+BUCKET_NAME = "etl-raw-data"
 
 
 def run_etl(
@@ -108,6 +109,9 @@ def run_etl(
                 table_name=table_name,
                 dataset_name=f"schema_{environment}",
                 key_path=KEY_PATH,
+                bucket_name=BUCKET_NAME,
+                environment=environment,
+                end_datetime=end_datetime,
             )
     else:
         process_chunk_then_load(
@@ -115,6 +119,9 @@ def run_etl(
             table_name=table_name,
             dataset_name=f"schema_{environment}",
             key_path=KEY_PATH,
+            bucket_name=BUCKET_NAME,
+            environment=environment,
+            end_datetime=end_datetime,
         )
 
     print(
