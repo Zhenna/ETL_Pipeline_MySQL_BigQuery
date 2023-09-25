@@ -28,14 +28,15 @@ resource "google_monitoring_alert_policy" "etl_alert_policy2" {
 
   conditions {
     display_name = "Cloud Run Job - Log entries"
-    condition_absent {
-      filter   = "resource.type = \"cloud_run_job\" AND resource.labels.job_name = has_substring(\"etl-\") AND metric.type = \"logging.googleapis.com/log_entry_count\" AND metric.labels.severity = \"ERROR\""
-      duration = "86400s"
+    condition_threshold {
+      filter     = "resource.type = \"cloud_run_job\" AND resource.labels.job_name = starts_with(\"run-etl-\") AND metric.type = \"logging.googleapis.com/log_entry_count\" AND metric.labels.severity = \"ERROR\""
+      duration   = "0s"
+      comparison = "COMPARISON_GT"
       trigger {
-        percent = 100
+        count = 1
       }
       aggregations {
-        alignment_period   = "300s"
+        alignment_period   = "60s"
         per_series_aligner = "ALIGN_RATE"
       }
     }
