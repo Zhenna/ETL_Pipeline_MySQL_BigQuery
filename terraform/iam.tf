@@ -2,6 +2,7 @@
 resource "google_service_account" "etl_account" {
   account_id   = "terraform-for-etl"
   display_name = "terraform-for-etl"
+  description  = "A service account for ETL job only"
   project      = var.gcp-project-id
 }
 
@@ -18,20 +19,20 @@ resource "google_storage_bucket_iam_member" "tf-state-bucket" {
   member = "serviceAccount:${google_service_account.etl_account.email}"
 }
 
-# allow this new service account to assume the role of secret accessor
-resource "google_secret_manager_secret_iam_member" "secret-accessor" {
+# allow this new service account to assume the role of secret viewer
+resource "google_secret_manager_secret_iam_member" "secret-viewer" {
   project   = var.gcp-project-num
   secret_id = google_secret_manager_secret.my_secret.id
-  role      = "roles/secretmanager.secretAccessor"
+  role      = "roles/secretmanager.viewer"
   member    = "serviceAccount:${google_service_account.etl_account.email}"
 }
 
-# allow this new service account to assume the role of artifact registry writer
-resource "google_artifact_registry_repository_iam_member" "artifact-registry-writer" {
+# allow this new service account to assume the role of artifact registry admin
+resource "google_artifact_registry_repository_iam_member" "artifact-registry-admin" {
   project    = google_artifact_registry_repository.repo_docker.project
   location   = google_artifact_registry_repository.repo_docker.location
   repository = google_artifact_registry_repository.repo_docker.name
-  role       = "roles/artifactregistry.writer"
+  role       = "roles/artifactregistry.admin"
   member     = "serviceAccount:${google_service_account.etl_account.email}"
 }
 
@@ -68,6 +69,13 @@ resource "google_project_iam_member" "cloud_scheduler_admin" {
 resource "google_project_iam_member" "service_account_user" {
   project = var.gcp-project-id
   role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${google_service_account.etl_account.email}"
+}
+
+# add project browser role
+resource "google_project_iam_member" "project_browser" {
+  project = var.gcp-project-id
+  role    = "roles/browser"
   member  = "serviceAccount:${google_service_account.etl_account.email}"
 }
 

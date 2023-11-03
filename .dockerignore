@@ -94,4 +94,6 @@ venv/
 
 # ------------- custom --------
 
-*/terraform
+terraform/
+*.csv
+*.json
