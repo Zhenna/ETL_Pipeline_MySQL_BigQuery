@@ -27,6 +27,14 @@ resource "google_secret_manager_secret_iam_member" "secret-viewer" {
   member    = "serviceAccount:${google_service_account.etl_account.email}"
 }
 
+# allow this new service account to assume the role of secret accessor
+resource "google_secret_manager_secret_iam_member" "secret-accessor" {
+  project   = var.gcp-project-num
+  secret_id = google_secret_manager_secret.my_secret.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.account.email}"
+}
+
 # allow this new service account to assume the role of artifact registry admin
 resource "google_artifact_registry_repository_iam_member" "artifact-registry-admin" {
   project    = google_artifact_registry_repository.repo_docker.project
