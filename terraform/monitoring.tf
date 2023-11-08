@@ -35,10 +35,10 @@ resource "google_monitoring_alert_policy" "etl_alert_policy2" {
       trigger {
         count = 1
       }
-      aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_RATE"
-      }
+      # aggregations {
+      #   alignment_period   = "60s"
+      #   per_series_aligner = "ALIGN_RATE"
+      # }
     }
   }
 
